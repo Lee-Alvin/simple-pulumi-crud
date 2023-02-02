@@ -1,0 +1,50 @@
+[project]
+name = "simple-pulumi-crud"  
+version = "0.1.0"  
+description = "Python CRUD application with AWS's DynamoDB and Pulumi behind Flask REST API." 
+requires-python = ">=3.10"
+dependencies = [
+  "pulumi",
+  "pulumi-aws",
+  "Flask",
+  "boto3",
+  "aws_error_utils",
+  "python-dotenv",
+  "marshmallow-dataclass",
+]
+
+[project.optional-dependencies]
+dev = [
+  "tox",
+  "black",
+  "bumpver",
+  "grpcio==1.51.1"
+]
+
+  
+[build-system]
+requires = [
+    "setuptools >= 35.0.2",
+    "setuptools_scm >= 2.0.0, <3"
+]
+build-backend = "setuptools.build_meta"
+
+[tool.black]
+line-length = 88
+target_version = ['py36']
+include = '\.pyi?$'
+
+[tool.bumpver]
+current_version = "0.1.0"
+version_pattern = "MAJOR.MINOR.PATCH"
+commit_message = "bump version {old_version} -> {new_version}"
+
+[tool.bumpver.file_patterns]
+"pyproject.toml" = [
+    'current_version = "{version}"',
+]
+"README.md" = [
+    "{version}",
+    "{pep440_version}",
+]
+

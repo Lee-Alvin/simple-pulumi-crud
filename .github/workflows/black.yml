@@ -1,0 +1,19 @@
+name: python-linter
+
+on: [push, pull_request]
+
+jobs:
+  black:
+    strategy:
+      matrix:
+        python: ["3.7", "3.8", "3.9", "3.10"]
+        platform: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - uses: actions/checkout@v1
+      - uses: ricardochaves/python-lint@v1.3.0
+        with:
+          python-root-list: "python_alelo tests"
+          use-black: true
+          use-mypy: true
+          use-isort: true
