@@ -1,5 +1,5 @@
 from marshmallow import Schema, fields, validate
-from models.status_type import StatusType
+from status_type import StatusType
 
 
 class GetUserSchema(Schema):
