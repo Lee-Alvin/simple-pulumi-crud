@@ -3,3 +3,4 @@
 pulumi/venv
 env
 .env
+.vscode

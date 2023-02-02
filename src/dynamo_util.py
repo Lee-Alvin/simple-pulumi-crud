@@ -28,6 +28,16 @@ table.load()
 
 
 def delete_user(request_body: Union[dict, str]):
+    """
+    Delete a user given the username and user_id
+
+    Called with the /simple-crud-api/user endpoint using DELETE method. Looks for and deletes a user in the dynamo table that matches the given username and user_id.
+    If no item is found, then nothing will be deleted. Uses marshmallow validator to check request_body follows format.
+
+    Parameter is request_body. Incoming dict payload that should contain username and user_id. Both strings.
+    Returns a JSON with code, message, http_status_code, operation, and body. All strings. May return client errors or validation errors depending on payload.
+
+    """
     try:
         DeleteUserSchema().loads(json.dumps(request_body))
 
@@ -48,30 +58,42 @@ def delete_user(request_body: Union[dict, str]):
             if "Attributes" in response
             else "No items matched. No items deleted.",
         ).return_JSON()
-    except ClientError as e:
+    except ClientError as client_error:
         logger.error(
-            f"Failed to delete_item on {USERS_TABLE_NAME}. Code: {e.response['Error']['Code']}. Message: {e.response['Error']['Message']}"
+            f"Failed to delete_item on {USERS_TABLE_NAME}. Code: {client_error.response['Error']['Code']}. Message: {client_error.response['Error']['Message']}"
         )
 
         return APIResponse(
-            code=e.response["Error"]["Code"],
-            message=e.response["Error"]["Message"],
+            code=client_error.response["Error"]["Code"],
+            message=client_error.response["Error"]["Message"],
             http_status_code=500,
-            operation=e.operation_name,
+            operation=client_error.operation_name,
             body="",
         ).return_JSON()
-    except ValidationError as e:
+    except ValidationError as validation_error:
         logger.error(f"Failed API request validator")
         return APIResponse(
             code="ValidationError",
             message="Failed API request validator",
             http_status_code=400,
             operation="delete_item",
-            body=str(e),
+            body=str(validation_error),
         ).return_JSON()
 
 
 def index_query(request_body: Union[dict, str]):
+    """
+    Query the table using the StatusIndex given status
+
+    Called with the /simple-crud-api/user/index endpoint using GET method. Looks for all users with matching status in the dynamo table.
+    If no item is found, then no items will be returned. Status must be either ACTIVE or INACTIVE. Uses marshmallow validator to check request_body follows format.
+
+    Parameter is request_body. Incoming dict payload that should contain status which can only be either ACTIVE or INACTIVE. String.
+    Returns a JSON with code, message, http_status_code, operation, and body of items matching query with item count. All strings.
+    May return client errors or validation errors depending on payload.
+
+    """
+
     try:
         request_body = StatusIndexQuerySchema().loads(json.dumps(request_body))
         response = table.query(
@@ -89,31 +111,43 @@ def index_query(request_body: Union[dict, str]):
             else "",
         ).return_JSON()
 
-    except ClientError as e:
+    except ClientError as client_error:
         logger.error(
-            f"Failed to query {STATUS_INDEX_NAME} on {USERS_TABLE_NAME}. Code: {e.response['Error']['Code']}. Message: {e.response['Error']['Message']}"
+            f"Failed to query {STATUS_INDEX_NAME} on {USERS_TABLE_NAME}. Code: {client_error.response['Error']['Code']}. Message: {client_error.response['Error']['Message']}"
         )
 
         return APIResponse(
-            code=e.response["Error"]["Code"],
-            message=e.response["Error"]["Message"],
+            code=client_error.response["Error"]["Code"],
+            message=client_error.response["Error"]["Message"],
             http_status_code=500,
-            operation=e.operation_name,
+            operation=client_error.operation_name,
             body="",
         ).return_JSON()
 
-    except ValidationError as e:
+    except ValidationError as validation_error:
         logger.error(f"Failed API request validator")
         return APIResponse(
             code="ValidationError",
             message="Failed API request validator",
             http_status_code=400,
             operation="query",
-            body=str(e),
+            body=str(validation_error),
         ).return_JSON()
 
 
 def create_user(request_body: Union[dict, str]):
+    """
+    Create a user given the username, user_id, and status.
+
+    Called with the /simple-crud-api/user endpoint using POST method. Creates a user with request_body username, user_id, and status to insert into the table. created_date
+    value uses the current date in DD/MM/YY format and added to the record to be inserted. Uses marshmallow validator to check request_body follows format.
+
+    Parameter is request_body. Incoming dict payload that should contain username, user_id, and status. All strings.
+    Returns a JSON with code, message, http_status_code, operation, and empty body. All strings.
+    May return client errors or validation errors depending on payload.
+
+    """
+
     try:
         request_body = CreateUserSchema().loads(json.dumps(request_body))
         response = table.put_item(
@@ -132,30 +166,42 @@ def create_user(request_body: Union[dict, str]):
             operation="create_item",
             body="",
         ).return_JSON()
-    except ClientError as e:
+    except ClientError as client_error:
         logger.error(
-            f"Failed to create_item on {USERS_TABLE_NAME}. Code: {e.response['Error']['Code']}. Message: {e.response['Error']['Message']}"
+            f"Failed to create_item on {USERS_TABLE_NAME}. Code: {client_error.response['Error']['Code']}. Message: {client_error.response['Error']['Message']}"
         )
 
         return APIResponse(
-            code=e.response["Error"]["Code"],
-            message=e.response["Error"]["Message"],
+            code=client_error.response["Error"]["Code"],
+            message=client_error.response["Error"]["Message"],
             http_status_code=500,
-            operation=e.operation_name,
+            operation=client_error.operation_name,
             body="",
         ).return_JSON()
-    except ValidationError as e:
+    except ValidationError as validation_error:
         logger.error(f"Failed API request validator")
         return APIResponse(
             code="ValidationError",
             message="Failed API request validator",
             http_status_code=400,
             operation="create_item",
-            body=str(e),
+            body=str(validation_error),
         ).return_JSON()
 
 
 def update_user(request_body: Union[dict, str]):
+    """
+    Update a user's status given the username, user_id, and status.
+
+    Called with the /simple-crud-api/user endpoint using PUT method. Updates an existing user with request_body' status. Can only be ACTIVE or INACTIVE.
+    Uses marshmallow validator to check request_body follows format.
+
+    Parameter is request_body. Incoming dict payload that should contain username, user_id, and status. All strings.
+    Returns a JSON with code, message, http_status_code, operation, and empty body. All strings.
+    May return client errors or validation errors depending on payload.
+
+    """
+
     try:
         request_body = UpdateUserSchema().loads(json.dumps(request_body))
         response = table.update_item(
@@ -176,30 +222,41 @@ def update_user(request_body: Union[dict, str]):
             operation="update_item",
             body=response["Attributes"],
         ).return_JSON()
-    except ClientError as e:
+    except ClientError as client_error:
         logger.error(
-            f"Failed to update_item on {USERS_TABLE_NAME}. Code: {e.response['Error']['Code']}. Message: {e.response['Error']['Message']}"
+            f"Failed to update_item on {USERS_TABLE_NAME}. Code: {client_error.response['Error']['Code']}. Message: {client_error.response['Error']['Message']}"
         )
 
         return APIResponse(
-            code=e.response["Error"]["Code"],
-            message=e.response["Error"]["Message"],
+            code=client_error.response["Error"]["Code"],
+            message=client_error.response["Error"]["Message"],
             http_status_code=500,
-            operation=e.operation_name,
+            operation=client_error.operation_name,
             body="",
         ).return_JSON()
-    except ValidationError as e:
+    except ValidationError as validation_error:
         logger.error(f"Failed API request validator")
         return APIResponse(
             code="ValidationError",
             message="Failed API request validator",
             http_status_code=400,
             operation="update_item",
-            body=str(e),
+            body=str(validation_error),
         ).return_JSON()
 
 
 def get_user(request_body: Union[dict, str]):
+    """
+    Get a user given the username and user_id.
+
+    Called with the /simple-crud-api/user endpoint using GET method. Returns an existing user with request_body's username and user_id.
+    Uses marshmallow validator to check request_body follows format. Returns empty body if user not found.
+
+    Parameter is request_body. Incoming dict payload that should contain username, user_id, and status. All strings.
+    Returns a JSON with code, message, http_status_code, operation, and empty body. All strings.
+    May return client errors or validation errors depending on payload.
+
+    """
     try:
         request_body = GetUserSchema().loads(json.dumps(request_body))
         response = table.get_item(
@@ -217,25 +274,25 @@ def get_user(request_body: Union[dict, str]):
             body=response["Item"] if "Item" in response else "",
         ).return_JSON()
 
-    except ClientError as e:
+    except ClientError as client_error:
         logger.error(
-            f"Failed to get_item on {USERS_TABLE_NAME}. Code: {e.response['Error']['Code']}. Message: {e.response['Error']['Message']}"
+            f"Failed to get_item on {USERS_TABLE_NAME}. Code: {client_error.response['Error']['Code']}. Message: {client_error.response['Error']['Message']}"
         )
 
         return APIResponse(
-            code=e.response["Error"]["Code"],
-            message=e.response["Error"]["Message"],
+            code=client_error.response["Error"]["Code"],
+            message=client_error.response["Error"]["Message"],
             http_status_code=500,
-            operation=e.operation_name,
+            operation=client_error.operation_name,
             body="",
         ).return_JSON()
 
-    except ValidationError as e:
+    except ValidationError as validation_error:
         logger.error(f"Failed API request validator")
         return APIResponse(
             code="ValidationError",
             message="Failed API request validator",
             http_status_code=400,
             operation="get_item",
-            body=str(e),
+            body=str(validation_error),
         ).return_JSON()
