@@ -6,8 +6,8 @@ jobs:
   black:
     strategy:
       matrix:
-        python: ["3.7", "3.8", "3.9", "3.10"]
-        platform: [ubuntu-latest, macos-latest, windows-latest]
+        python: ["3.10"]
+        platform: [ubuntu-latest]
     runs-on: ${{ matrix.platform }}
     steps:
       - uses: actions/checkout@v1
