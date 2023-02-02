@@ -71,7 +71,7 @@ def delete_user(request_body: Union[dict, str]):
             body="",
         ).return_JSON()
     except ValidationError as validation_error:
-        logger.error(f"Failed API request validator")
+        logger.error("Failed API request validator")
         return APIResponse(
             code="ValidationError",
             message="Failed API request validator",
@@ -125,7 +125,7 @@ def index_query(request_body: Union[dict, str]):
         ).return_JSON()
 
     except ValidationError as validation_error:
-        logger.error(f"Failed API request validator")
+        logger.error("Failed API request validator")
         return APIResponse(
             code="ValidationError",
             message="Failed API request validator",
@@ -179,7 +179,7 @@ def create_user(request_body: Union[dict, str]):
             body="",
         ).return_JSON()
     except ValidationError as validation_error:
-        logger.error(f"Failed API request validator")
+        logger.error("Failed API request validator")
         return APIResponse(
             code="ValidationError",
             message="Failed API request validator",
@@ -235,7 +235,7 @@ def update_user(request_body: Union[dict, str]):
             body="",
         ).return_JSON()
     except ValidationError as validation_error:
-        logger.error(f"Failed API request validator")
+        logger.error("Failed API request validator")
         return APIResponse(
             code="ValidationError",
             message="Failed API request validator",
@@ -288,7 +288,7 @@ def get_user(request_body: Union[dict, str]):
         ).return_JSON()
 
     except ValidationError as validation_error:
-        logger.error(f"Failed API request validator")
+        logger.error("Failed API request validator")
         return APIResponse(
             code="ValidationError",
             message="Failed API request validator",

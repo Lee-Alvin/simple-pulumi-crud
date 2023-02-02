@@ -17,3 +17,7 @@ jobs:
           use-black: true
           use-mypy: true
           use-isort: true
+          use-pylint: false
+          use-pycodestyle: false
+          use-flake8: false
+          extra-black-options: "line-length = 88"
