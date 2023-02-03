@@ -1,0 +1,6 @@
+**/__pycache__
+pulumi/venv
+env
+.env
+.vscode
+credentials
