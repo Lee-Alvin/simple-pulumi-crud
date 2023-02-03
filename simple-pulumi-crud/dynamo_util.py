@@ -9,14 +9,14 @@ from botocore.exceptions import ClientError
 from boto3.dynamodb.conditions import Key
 from typing import Union
 
-from models.request import (
+from .models.request import (
     GetUserSchema,
     CreateUserSchema,
     DeleteUserSchema,
     UpdateUserSchema,
     StatusIndexQuerySchema,
 )
-from models.response import APIResponse
+from .models.response import APIResponse
 
 USERS_TABLE_NAME = os.getenv("USERS_TABLE_NAME") or "Users-dev"
 STATUS_INDEX_NAME = os.getenv("STATUS_INDEX_NAME") or "StatusIndex"

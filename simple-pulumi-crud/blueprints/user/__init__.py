@@ -1,5 +1,5 @@
 from flask import Blueprint, request
-from dynamo_util import create_user, get_user, update_user, delete_user, index_query
+from ...dynamo_util import create_user, get_user, update_user, delete_user, index_query
 
 blueprint = Blueprint("api", __name__, url_prefix="/simple-crud-api")
 
