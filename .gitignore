@@ -4,3 +4,5 @@ env
 .env
 .vscode
 credentials
+dist/
+simple_pulumi_crud.egg-info/

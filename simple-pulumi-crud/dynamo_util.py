@@ -8,6 +8,7 @@ from marshmallow.exceptions import ValidationError
 from botocore.exceptions import ClientError
 from boto3.dynamodb.conditions import Key
 from typing import Union
+from dotenv import load_dotenv
 
 from .models.request import (
     GetUserSchema,
@@ -18,11 +19,18 @@ from .models.request import (
 )
 from .models.response import APIResponse
 
+load_dotenv()
+
 USERS_TABLE_NAME = os.getenv("USERS_TABLE_NAME") or "Users-dev"
 STATUS_INDEX_NAME = os.getenv("STATUS_INDEX_NAME") or "StatusIndex"
 
 logger = logging.getLogger(__name__)
-dynamo = boto3.resource("dynamodb")
+session = boto3.Session(
+    region_name=os.getenv("REGION_NAME"),
+    aws_access_key_id=os.getenv("AWS_ACCESS_KEY"),
+    aws_secret_access_key=os.getenv("AWS_SECRET_KEY"),
+)
+dynamo = session.resource("dynamodb")
 table = dynamo.Table(USERS_TABLE_NAME)
 table.load()
 
