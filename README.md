@@ -37,9 +37,16 @@ You will need Pulumi installed and your account/organization set. After running 
 To start the Flask API locally, run below:
 
 ```
-flask -e flask.cfg run
+flask run
 ```
 
-This will run Flask and give it the flask.cfg file with some variables defined in it to enable debug mode and help it find the flask_api.py file. Open up something you can easily test your API with like Postman and you can use the simple-pulumi-crud-collection JSON file to test out the endpoints. Run the create_user first so that you will have some dummy data to test.
+This will run Flask. Open up something you can easily test your API with like Postman and you can use the simple-pulumi-crud-collection JSON file to test out the endpoints. Run the create_user first so that you will have some dummy data to test.
+
+Creating the image and running a container from the image using Docker is done with below:
+
+```
+    docker build -t alvinleedocker/simple-pulumi-crud:latest .
+    docker run -d -p 5000:5000 alvinleedocker/simple-pulumi-crud 
+```
 </p>
 </details>
